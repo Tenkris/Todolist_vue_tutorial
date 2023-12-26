@@ -20,7 +20,22 @@ export const useTodoStore = defineStore('todo', {
         console.log(error)
         // Handle any errors that occurred during the request
       }
-    }
-   
+    },
+    async AddTodos(todo) {
+      try {
+        console.log('pinia',todo)
+        const body = {
+          name: todo.name,
+          status: todo.status,
+        }
+        const response = await axios.post(`${url}/todos`,body);
+        this.todos.push(response.data)
+        // Handle the response data here
+      } catch (error) {
+        console.log(error)
+        // Handle any errors that occurred during the request
+      }
+    },
   },
+
 }) 

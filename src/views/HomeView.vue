@@ -1,7 +1,6 @@
 <script setup>
 import { useTodoStore } from "@/stores/todo";
-import { onMounted, reactive, watch } from "vue";
-
+import { onMounted, reactive, watch ,ref, computed} from "vue";
 const todolistStore = useTodoStore();
 const tabState = reactive({
   activeTab: 1,
@@ -22,6 +21,46 @@ onMounted(async () => {
     console.log(error);
   }
 });
+const name = ref('');
+const IsValid = ref(false);
+const tabString = computed(() => {
+  switch (tabState.activeTab) {
+    case 1:
+      return "Pending";
+    case 2:
+      return "Doing";
+    case 3:
+      return "Done";
+    default:
+      return "Pending";
+  }
+});
+watch(name, (newValue, oldValue) => {
+  if (!/^[a-zA-Z]+$/.test(newValue) || newValue.length <= 0) {
+     IsValid.value = false;
+  }
+  else{
+    IsValid.value = true;
+  }
+
+  console.log("Active tab changed from", IsValid.value , newValue);
+});
+
+const SummitAdd = async()=>{
+  try{
+    console.log('Homeview', tabState.activeTab , tabString.value)
+    await todolistStore.AddTodos({
+      name: name.value,
+      status: tabString.value,
+    });
+    name.value = '';
+  }
+  catch(error){
+    console.log(error);
+  }
+}
+    
+
 
 window.addEventListener("keydown", (event) => {
   if (event.key === "ArrowLeft") {
@@ -45,8 +84,8 @@ window.addEventListener("keydown", (event) => {
 <template>
   <div class="container mx-auto h-screen p-5">
     <div class="flex flex-row justify-between">
-      <input class="input input-primary w-full" />
-      <button class="btn btn-primary ml-3 sm:ml-5">add</button>
+      <input class="input input-primary w-full" v-model="name"/>
+      <button class="btn btn-primary ml-3 sm:ml-5" :disabled="!IsValid" @click="SummitAdd">add</button>
     </div>
 
     <div role="tablist" class="tabs tabs-boxed my-5">
@@ -81,7 +120,7 @@ window.addEventListener("keydown", (event) => {
         <div v-for="todo in todolistStore.todos" :key="todo.id">
           <div class="flex flex-row justify-between items-center my-2">
             <input type="checkbox" checked="checked" class="checkbox" />
-            {{ todo.name }}
+            {{ todo.name }} {{ todo.id }}  : Status :{{ todo.status }}
             <div class=" flex flex-row gap-3"> 
               <button class="btn btn-secondary">edit</button>
               <button class="btn btn-primary">delete</button>
