@@ -130,7 +130,9 @@ window.addEventListener("keydown", (event) => {
             <input type="checkbox" checked="checked" class="checkbox" />
             {{ todo.name }} {{ todo.id }}  : Status :{{ todo.status }}
             <div class=" flex flex-row gap-3"> 
-              <button class="btn btn-secondary">edit</button>
+              <RouterLink :to="{ name: 'EditTodo', params: { id: todo.id } }">
+                <button class="btn btn-secondary">edit</button> 
+              </RouterLink>
               <button class="btn btn-primary" @click="DeleteTodo(todo.id)">delete</button>
             </div>
           </div>

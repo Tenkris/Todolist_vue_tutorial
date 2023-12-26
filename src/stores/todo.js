@@ -45,7 +45,21 @@ export const useTodoStore = defineStore('todo', {
         console.log(error)
         // Handle any errors that occurred during the request
       }
-    }
+    },
+    async EditTodos(id , todo) {
+      try {
+        const body = {
+          name: todo.name,
+          status: todo.status,
+        }
+        const response = await axios.put(`${url}/todos/${id}`,body);
+        this.todos = this.todos.map((item) => item.id === id ? response.data : item)
+        // Handle the response data here
+      } catch (error) {
+        console.log(error)
+        // Handle any errors that occurred during the request
+      }
+    },
   },
 
 }) 
