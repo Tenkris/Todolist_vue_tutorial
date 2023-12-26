@@ -22,6 +22,24 @@ onMounted(async () => {
     console.log(error);
   }
 });
+
+window.addEventListener("keydown", (event) => {
+  if (event.key === "ArrowLeft") {
+    if(tabState.activeTab -1  < 1){
+      tabState.activeTab = 3;
+    }
+    else{
+      tabState.activeTab = Math.max(tabState.activeTab - 1, 1);
+    }
+  } else if (event.key === "ArrowRight") {
+    if(tabState.activeTab + 1 > 3){
+      tabState.activeTab = 1;
+    }
+    else{
+      tabState.activeTab = Math.min(tabState.activeTab + 1, 3);
+    }
+  }
+});
 </script>
 
 <template>
@@ -31,7 +49,7 @@ onMounted(async () => {
       <button class="btn btn-primary ml-3 sm:ml-5">add</button>
     </div>
 
-    <div role="tablist" class="tabs tabs-boxed">
+    <div role="tablist" class="tabs tabs-boxed my-5">
       <a
         role="tab"
         class="tab"
@@ -57,6 +75,7 @@ onMounted(async () => {
         Done
       </a>
     </div>
+
     <div class="flex flex-col">
       <div>
         <div v-for="todo in todolistStore.todos" :key="todo.id">
