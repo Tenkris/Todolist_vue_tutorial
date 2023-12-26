@@ -15,6 +15,9 @@ onMounted( async () => {
 </script>
 
 <template>
+  <div class=" bg-red-800">
+    Home
+  </div>
   <div>
     <ul>
       <li v-for="todo in todolistStore.todos" :key="todo.id">
