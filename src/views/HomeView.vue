@@ -59,7 +59,15 @@ const SummitAdd = async()=>{
     console.log(error);
   }
 }
-    
+
+const DeleteTodo = async(id)=>{
+  try{
+    await todolistStore.DeleteTodo(id);
+  }
+  catch(error){
+    console.log(error);
+  }
+}
 
 
 window.addEventListener("keydown", (event) => {
@@ -123,7 +131,7 @@ window.addEventListener("keydown", (event) => {
             {{ todo.name }} {{ todo.id }}  : Status :{{ todo.status }}
             <div class=" flex flex-row gap-3"> 
               <button class="btn btn-secondary">edit</button>
-              <button class="btn btn-primary">delete</button>
+              <button class="btn btn-primary" @click="DeleteTodo(todo.id)">delete</button>
             </div>
           </div>
         </div>

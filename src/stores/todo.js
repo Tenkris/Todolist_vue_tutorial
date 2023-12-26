@@ -36,6 +36,16 @@ export const useTodoStore = defineStore('todo', {
         // Handle any errors that occurred during the request
       }
     },
+    async DeleteTodo(id){
+      try {
+        await axios.delete(`${url}/todos/${id}`);
+        this.todos = this.todos.filter((item) => item.id !== id)
+        // Handle the response data here
+      } catch (error) {
+        console.log(error)
+        // Handle any errors that occurred during the request
+      }
+    }
   },
 
 }) 
