@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted ,watch } from "vue";
 import { useRoute } from "vue-router";
+import { useTodoStore } from "@/stores/todo";
+const todolistStore = useTodoStore(); 
 
 // Access the id from the query
 const iditem = ref("");
@@ -12,15 +14,29 @@ onMounted(async () => {
 });
 const name = ref("");
 const IsValid = ref(false); 
-watch(name, (newValue, oldValue) => {
-  if (!/^[a-zA-Z]+$/.test(newValue) || newValue.length <= 0) {
-    IsValid.value = false;
-  } else {
-    IsValid.value = true;
-  }
-
-  console.log("Active tab changed from", IsValid.value, newValue);
+const status = ref("");
+watch([name, status], ([newName, newStatus], [oldName, oldStatus]) => {
+    if (!/^[a-zA-Z]+$/.test(newName) || newName.length <= 0 || newStatus.length <= 0) {
+        IsValid.value = false;
+    } else {
+        IsValid.value = true;
+    }
+    console.log("Active tab changed from", IsValid.value, newName, newStatus);
 });
+const SubmitEdit = async () =>{
+    try{
+        const body = {
+            name: name.value,
+            status: status.value,
+        }
+        await todolistStore.EditTodos(iditem.value, body);
+        name.value = '';
+        status.value = '';
+    }
+    catch(error){
+        console.log(error);
+    }
+}
 </script>
 
 <template>
@@ -57,15 +73,15 @@ watch(name, (newValue, oldValue) => {
 
 
     <div>
-      <div>Status</div>
-      <select class="select select-secondary w-full">
-        <option disabled selected>Pick your Status</option>
-        <option>Pending</option>
-        <option>Doing</option>
-        <option>Done</option>
-      </select>
+        <div>Status</div>
+        <select class="select select-secondary w-full" v-model="status">
+            <option disabled selected>Pick your Status</option>
+            <option>Pending</option>
+            <option>Doing</option>
+            <option>Done</option>
+        </select>
     </div>
     
-    <button class="btn btn-primary w-full" :disabled="!IsValid">Submit Edit</button>
+    <button class="btn btn-primary w-full" :disabled="!IsValid" @click="SubmitEdit">Submit Edit</button>
   </div>
 </template>
