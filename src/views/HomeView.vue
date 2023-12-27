@@ -162,7 +162,9 @@ window.addEventListener("keydown", (event) => {
         <div v-for="todo in filterTodo" :key="todo.id">
           <div class="flex flex-row justify-between items-center my-2">
             <input type="checkbox" class="checkbox" @change="UpdateTodo($event,todo)" :checked="todo.status === 'Done'" />
-            {{ todo.name }} {{ todo.status }}
+            <div :class="{ 'line-through': todo.status === 'Done' }">
+              {{ todo.name }} {{ todo.status }}
+            </div>
             <div class=" flex flex-row gap-3"> 
               <RouterLink :to="{ name: 'EditTodo', params: { id: todo.id } }">
                 <button class="btn btn-secondary">edit</button> 
