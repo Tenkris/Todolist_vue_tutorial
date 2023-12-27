@@ -1,11 +1,13 @@
 <script setup>
 import { useTodoStore } from "@/stores/todo";
 import { onMounted, reactive, watch ,ref, computed} from "vue";
+import Loading from "@/components/Loading.vue";
+
 const todolistStore = useTodoStore();
 const tabState = reactive({
   activeTab: 1,
 });
-
+const IsLoading = ref(false); 
 watch(
   async () => tabState.activeTab,
   (newValue, oldValue) => {
@@ -16,12 +18,14 @@ watch(
 );
 
 onMounted(async () => {
+  IsLoading.value = true;
   try {
     await todolistStore.LoadTodos();
     console.log("onmounted", todolistStore.todos);
   } catch (error) {
     console.log(error);
   }
+  IsLoading.value = false;
 });
 const name = ref('');
 const IsValid = ref(false);
@@ -49,6 +53,7 @@ watch(name, (newValue, oldValue) => {
 });
 
 const SummitAdd = async()=>{
+  IsLoading.value = true;
   try{
     console.log('Homeview', tabState.activeTab , tabString.value)
     await todolistStore.AddTodos({
@@ -60,17 +65,21 @@ const SummitAdd = async()=>{
   catch(error){
     console.log(error);
   }
+  IsLoading.value = false;
 }
 
 const DeleteTodo = async(id)=>{
+  IsLoading.value = true;
   try{
     await todolistStore.DeleteTodo(id);
   }
   catch(error){
     console.log(error);
   }
+  IsLoading.value = false;
 }
 const UpdateTodo = async(event , todo)=>{
+  IsLoading.value = true;
   try{
     console.log('update',todo , event.target.checked);
     let status = ''; 
@@ -90,6 +99,7 @@ const UpdateTodo = async(event , todo)=>{
   catch(error){
     console.log(error);
   }
+  IsLoading.value = false;
 }
 const filterTodo = computed(() => {
   switch (tabState.activeTab) {
@@ -125,6 +135,7 @@ window.addEventListener("keydown", (event) => {
 
 <template>
   <div class="container mx-auto h-screen p-5">
+    <Loading v-if="IsLoading" />
     <div class="flex flex-row justify-between">
       <input class="input input-primary w-full" v-model="name"/>
       <button class="btn btn-primary ml-3 sm:ml-5" :disabled="!IsValid" @click="SummitAdd">add</button>
@@ -167,9 +178,9 @@ window.addEventListener("keydown", (event) => {
             </div>
             <div class=" flex flex-row gap-3"> 
               <RouterLink :to="{ name: 'EditTodo', params: { id: todo.id } }">
-                <button class="btn btn-secondary">edit</button> 
+                <button class="btn btn-secondary" :disabled="IsLoading">edit</button> 
               </RouterLink>
-              <button class="btn btn-primary" @click="DeleteTodo(todo.id)">delete</button>
+              <button class="btn btn-primary" @click="DeleteTodo(todo.id)" :disabled="IsLoading">delete</button>
             </div>
           </div>
         </div>
