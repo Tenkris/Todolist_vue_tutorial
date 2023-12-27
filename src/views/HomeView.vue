@@ -68,7 +68,15 @@ const DeleteTodo = async(id)=>{
     console.log(error);
   }
 }
-
+const UpdateTodo = async(event , todo)=>{
+  try{
+    console.log('update',todo , event.target.checked);
+    // await todolistStore.EditTodos(id , todo);
+  }
+  catch(error){
+    console.log(error);
+  }
+}
 
 window.addEventListener("keydown", (event) => {
   if (event.key === "ArrowLeft") {
@@ -127,8 +135,8 @@ window.addEventListener("keydown", (event) => {
       <div>
         <div v-for="todo in todolistStore.todos" :key="todo.id">
           <div class="flex flex-row justify-between items-center my-2">
-            <input type="checkbox" checked="checked" class="checkbox" />
-            {{ todo.name }} {{ todo.id }}  : Status :{{ todo.status }}
+            <input type="checkbox" class="checkbox" @change="UpdateTodo($event,todo)" :checked="todo.status === 'Done'" />
+            {{ todo.name }} {{ todo.status }}
             <div class=" flex flex-row gap-3"> 
               <RouterLink :to="{ name: 'EditTodo', params: { id: todo.id } }">
                 <button class="btn btn-secondary">edit</button> 
