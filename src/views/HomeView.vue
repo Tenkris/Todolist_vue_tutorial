@@ -78,18 +78,14 @@ const UpdateTodo = async(event , todo)=>{
       status = 'Done';
     }
     else{
-      if(tabState.activeTab === 1){
-        status = 'Pending';
-      }
-      else if(tabState.activeTab === 2){
-        status = 'Doing';
-      }
+      status = 'Pending';
     }
     const body = {
       name: todo.name,
       status: status,
     }
     console.log('body', body);
+    await todolistStore.EditTodos(todo.id , body);
   }
   catch(error){
     console.log(error);
