@@ -7,9 +7,11 @@ const tabState = reactive({
 });
 
 watch(
-  () => tabState.activeTab,
+  async () => tabState.activeTab,
   (newValue, oldValue) => {
     console.log("Active tab changed from", oldValue, "to", newValue);
+    console.log('Here is Tabstring state' , tabString.value) 
+
   }
 );
 
@@ -71,12 +73,40 @@ const DeleteTodo = async(id)=>{
 const UpdateTodo = async(event , todo)=>{
   try{
     console.log('update',todo , event.target.checked);
-    // await todolistStore.EditTodos(id , todo);
+    let status = ''; 
+    if(event.target.checked){
+      status = 'Done';
+    }
+    else{
+      if(tabState.activeTab === 1){
+        status = 'Pending';
+      }
+      else if(tabState.activeTab === 2){
+        status = 'Doing';
+      }
+    }
+    const body = {
+      name: todo.name,
+      status: status,
+    }
+    console.log('body', body);
   }
   catch(error){
     console.log(error);
   }
 }
+const filterTodo = computed(() => {
+  switch (tabState.activeTab) {
+    case 1:
+      return todolistStore.todos.filter((todo) => todo.status === "Pending");
+    case 2:
+      return todolistStore.todos.filter((todo) => todo.status === "Doing");
+    case 3:
+      return todolistStore.todos.filter((todo) => todo.status === "Done");
+    default:
+      return todolistStore.todos.filter((todo) => todo.status === "Pending");
+  }
+});
 
 window.addEventListener("keydown", (event) => {
   if (event.key === "ArrowLeft") {
@@ -133,7 +163,7 @@ window.addEventListener("keydown", (event) => {
 
     <div class="flex flex-col">
       <div>
-        <div v-for="todo in todolistStore.todos" :key="todo.id">
+        <div v-for="todo in filterTodo" :key="todo.id">
           <div class="flex flex-row justify-between items-center my-2">
             <input type="checkbox" class="checkbox" @change="UpdateTodo($event,todo)" :checked="todo.status === 'Done'" />
             {{ todo.name }} {{ todo.status }}

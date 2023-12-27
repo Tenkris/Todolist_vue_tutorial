@@ -5,10 +5,12 @@ import axios from 'axios'
 const url = 'https://65863e32468ef171392e148a.mockapi.io'
 export const useTodoStore = defineStore('todo', {
   state: () => ({
-     todos : []
+     todos : [],
   }),
-  getters: {
-    
+  getters: { 
+    getTodos: (status) => {
+      return todos.filter((item) => item.status === status)
+    },
   },
   actions: {
     async LoadTodos() {
